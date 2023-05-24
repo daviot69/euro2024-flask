@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "euro2024-flask"
+version = "0.1.0"
+description = "Euro 2024 Predictions Website"
+authors = ["Ian Campbell <ianjcampbell69@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+packages = [{include = "euro2024_flask"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
