@@ -1,60 +1,46 @@
-from flask import Flask, render_template, flash
-from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField
-from wtforms.validators import DataRequired, Email
-from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
-from forms.user_forms import RegistrationForm
+from flask import Flask, render_template, flash, redirect, url_for
+from forms.user_forms import RegistrationForm, LoginForm
 from models.base import Session, User
+from flask_bcrypt import Bcrypt
+from flask_login import login_user, LoginManager, login_required, logout_user, current_user
 
 # Create a Flask Instance
 app = Flask(__name__)
-# app.config[
-#     "SQLALCHEMY_DATABASE_URI"
-# ] = "mysql+pymysql://db_admin:Krakow1068@192.168.1.12:3306/users"
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view='login'
 
+
+@login_manager.user_loader
+def load_user(user_id):
+    session = Session()
+    user = session.query(User).filter(User.id == user_id).first()
+    session.close()
+    return user
+
+
+bcrypt = Bcrypt(app)
 app.config["SECRET_KEY"] = "SidSidSid"
 
-# db = SQLAlchemy(app)
 
-
-# # CreateModel
-# class Users(db.Model):
-#     id = db.Column(db.Integer, primary_key=True)
-#     name = db.Column(db.String(200), nullable=False)
-#     email = db.Column(db.String(120), nullable=False, unique=True)
-#     date_added = db.Column(db.DateTime, default=datetime.utcnow())
-#
-#     def __repr__(self):
-#         return "<Name %r" % self.name
-
-
-# with app.app_context():
-#     db.create_all()
-
-
-# # Create a Form Class
-# class UserForm(FlaskForm):
-#     name = StringField("Name", validators=[DataRequired()])
-#     email = StringField("Email", validators=[DataRequired()])
-#     submit = SubmitField("Submit")
-
-
-# # Create a Form Class
-# class NamerForm(FlaskForm):
-#     name = StringField("What's Your Name", validators=[DataRequired()])
-#     submit = SubmitField("Submit")
-
-
-# Create a route decorator
 @app.route("/")
 def index():
     return render_template("index.html")
 
 
-# @app.route("/user/<name>")
-# def user(name):
-#     return render_template("user.html", name=name)
+@app.route("/rules")
+def rules():
+    return render_template('rules.html')
+
+
+@app.route("/scoring")
+def scoring():
+    return render_template('scoring.html')
+
+
+@app.route("/wildcard_groups")
+def wildcard_groups():
+    return render_template('wildcard_groups.html')
 
 
 @app.errorhandler(404)
@@ -65,35 +51,6 @@ def page_not_found(e):
 @app.errorhandler(500)
 def page_not_found(e):
     return render_template("500.html"), 404
-
-
-# @app.route("/name", methods=["GET", "POST"])
-# def name():
-#     name = None
-#     form = NamerForm()
-#     # Validate Form
-#     if form.validate_on_submit():
-#         name = form.name.data
-#         form.name.data = ""
-#         flash("Form Submitted Successfully")
-#     return render_template("name.html", name=name, form=form)
-
-
-# @app.route("/user/add", methods=["GET", "POST"])
-# def add_user():
-#     name = None
-#     form = UserForm()
-#     if form.validate_on_submit():
-#         user = Users.query.filter_by(email=form.email.data).first()
-#         if user is None:
-#             user = Users(name=form.name.data, email=form.email.data)
-#             db.session.add(user)
-#             db.session.commit()
-#         name = form.name.data
-#         form.name.data = ""
-#         form.email.data = ""
-#     our_users = Users.query.order_by(Users.date_added)
-#     return render_template("add_user.html", name=name, our_users=our_users, form=form)
 
 
 @app.route("/register", methods=["GET", "POST"])
@@ -107,19 +64,63 @@ def register():
             .first()
         )
         if not user:
+            pw_hash = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
             session.add(
                 User(
                     email_address=form.email_address.data,
                     forename=form.forename.data,
                     surname=form.surname.data,
                     favourite_club_id=form.favourite_club_id.data,
-                    favourite_country_id=form.favourite_country_id.data
-                    # wildcard_country_id=1,
+                    favourite_country_id=form.favourite_country_id.data,
+                    password_hash=pw_hash
                 )
             )
             session.commit()
             session.close()
-            flash(f"Registered Successfully - Welcome {form.forename.data}")
+            flash("Registered Successfully - Please Log In")
+            return redirect(url_for('login'))
         else:
             flash("This Email Address is already Registered")
     return render_template("register.html", form=form)
+
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        session = Session()
+        user = (
+            session.query(User)
+            .filter(User.email_address == form.email_address.data)
+            .first()
+        )
+        if user:
+            if bcrypt.check_password_hash(user.password_hash, form.password.data):
+                login_user(user)
+                return redirect(url_for("user_profile"))
+            else:
+                flash("Incorrect Password - Try again")
+        else:
+            flash("No Account exists with this Email Address")
+
+    return render_template("login.html", form=form)
+
+
+@app.route("/user_profile", methods=["GET", "POST"])
+@login_required
+def user_profile():
+    return render_template('user_profile.html')
+
+
+@app.route("/predictions", methods=["GET", "POST"])
+@login_required
+def predictions():
+    return render_template('predictions.html')
+
+
+@app.route("/logout", methods=["GET", "POST"])
+@login_required
+def logout():
+    logout_user()
+    flash("You have been Logged Out")
+    return redirect(url_for('login'))

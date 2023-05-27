@@ -2,6 +2,7 @@ from sqlalchemy import create_engine, Column, String, Integer, DateTime, Foreign
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship, backref
 from datetime import datetime
+from flask_login import UserMixin
 
 engine = create_engine(
     "mariadb+mariadbconnector://db_admin:Krakow1068@192.168.1.12:3306/euro2024"
@@ -71,7 +72,7 @@ class Venue(Base):
         self.country_id = country_id
 
 
-class User(Base):
+class User(Base, UserMixin):
     __tablename__ = "users"
     id = Column(Integer, primary_key=True)
     forename = Column(String(length=50), nullable=False)
@@ -86,7 +87,9 @@ class User(Base):
     wildcard_country_id = Column(
         Integer, ForeignKey("countries.id", ondelete="CASCADE")
     )
+    password_hash = Column(String(length=200), nullable=False)
     creation_date = Column(DateTime, default=datetime.now())
+    last_updated_date = Column(DateTime)
 
     def __int__(
         self,

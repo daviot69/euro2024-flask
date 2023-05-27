@@ -7,26 +7,14 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     {% endfor %}
-    <h1>Register</h1>
+    <h1>Login</h1>
     <br/>
     <form method="POST">
         {{ form.hidden_tag() }}
         {{ form.email_address.label(class="form-label") }}
         {{ form.email_address(class="form-control") }}
-        {{ form.forename.label(class="form-label") }}
-        {{ form.forename(class="form-control") }}
-        {{ form.surname.label(class="form-label") }}
-        {{ form.surname(class="form-control") }}
-        {{ form.favourite_club_id.label(class="form-label") }}
-        {{ form.favourite_club_id(class="form-control") }}
-        <br/>
-        {{ form.favourite_country_id.label(class="form-label") }}
-        {{ form.favourite_country_id(class="form-control") }}
-        <br/>
         {{ form.password.label(class="form-label") }}
         {{ form.password(class="form-control") }}
-        {{ form.password_check.label(class="form-label") }}
-        {{ form.password_check(class="form-control") }}
         <br/>
         {{ form.submit(class="btn btn-secondary") }}
     </form>
