@@ -4,11 +4,20 @@ version = "0.1.0"
 description = "Euro 2024 Predictions Website"
 authors = ["Ian Campbell <ianjcampbell69@gmail.com>"]
 license = "MIT"
-readme = "README.md"
+readme = "README.rst"
 packages = [{include = "euro2024_flask"}]
 
 [tool.poetry.dependencies]
 python = "^3.11"
+mariadb = "^1.1.6"
+flask = "^2.3.2"
+black = "^23.3.0"
+requests = "^2.31.0"
+flask-wtf = "^1.1.1"
+flask-sqlalchemy = "^3.0.3"
+pymysql = "^1.0.3"
+email-validator = "^2.0.0.post2"
+sqlalchemy = "^2.0.15"
 
 
 [build-system]
