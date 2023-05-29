@@ -49,8 +49,8 @@ def page_not_found(e):
 
 
 @app.errorhandler(500)
-def page_not_found(e):
-    return render_template("500.html"), 404
+def server_error(e):
+    return render_template("500.html"), 500
 
 
 @app.route("/register", methods=["GET", "POST"])
@@ -97,7 +97,7 @@ def login():
         if user:
             if bcrypt.check_password_hash(user.password_hash, form.password.data):
                 login_user(user)
-                return redirect(url_for("user_profile"))
+                return redirect(url_for("dashboard"))
             else:
                 flash("Incorrect Password - Try again")
         else:
@@ -116,6 +116,12 @@ def user_profile():
 @login_required
 def predictions():
     return render_template('predictions.html')
+
+
+@app.route("/dashboard")
+@login_required
+def dashboard():
+    return render_template('dashboard.html')
 
 
 @app.route("/logout", methods=["GET", "POST"])

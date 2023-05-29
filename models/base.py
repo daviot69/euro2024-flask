@@ -28,13 +28,15 @@ class Country(Base):
     __tablename__ = "countries"
     id = Column(Integer, primary_key=True)
     country_name = Column(String(length=100), nullable=False)
+    country_shortcode = Column(String(length=10), nullable=False)
     wildcard_group_id = Column(
         Integer,
         ForeignKey("wildcard_groups.id", ondelete="CASCADE"),
     )
 
-    def __int__(self, country_name, wildcard_group_id):
+    def __int__(self, country_name, country_shortcode, wildcard_group_id):
         self.country_name = country_name
+        self.country_shortcode = country_shortcode
         self.wildcard_group_id = wildcard_group_id
 
 
@@ -84,9 +86,6 @@ class User(Base, UserMixin):
     favourite_country_id = Column(
         Integer, ForeignKey("countries.id", ondelete="CASCADE"), nullable=False
     )
-    wildcard_country_id = Column(
-        Integer, ForeignKey("countries.id", ondelete="CASCADE")
-    )
     password_hash = Column(String(length=200), nullable=False)
     creation_date = Column(DateTime, default=datetime.now())
     last_updated_date = Column(DateTime)
@@ -97,14 +96,22 @@ class User(Base, UserMixin):
         surname,
         email_address,
         favourite_club_id,
-        favourite_country_id,
-        wildcard_country_id
-        # creation_date,
+        favourite_country_id
     ):
         self.forename = forename
         self.surname = surname
         self.email_address = email_address
         self.favourite_club_id = favourite_club_id
         self.favourite_country_id = favourite_country_id
-        self.wildcard_country_id = wildcard_country_id
-        # self.creation_date = creation_date
+
+
+# class Match(Base):
+#     __tablename__ = "matches"
+#     id = Column(Integer, primary_key=True)
+#
+#
+# class UserPrediction(Base):
+#     __tablename__ = "user_predictions"
+#     id = Column(Integer, primary_key=True)
+#     user_id = Column(Integer, nullable=False)
+

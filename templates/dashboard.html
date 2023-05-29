@@ -1,0 +1,142 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {% for message in get_flashed_messages() %}
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endfor %}
+    <h2>Ian Campbell</h2>
+    <br/>
+  <div class="row">
+    <div class="col-sm-6 mb-3 mb-sm-0">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">My Performance</h5>
+          <ul class="list-group">
+            <li class="list-group-item">Total Points : <strong>54</strong></li>
+            <li class="list-group-item">No. Of Perfect Predictions: <strong>3</strong></li>
+            <li class="list-group-item">Current Position: <strong>5th</strong></li>
+            <li class="list-group-item">Today's Points: <strong>12</strong></li>
+            <li class="list-group-item">Yesterday's Points: <strong>8</strong></li>
+            <li class="list-group-item">Wildcard Team: <strong>Spain</strong></li>
+            <li class="list-group-item">Wildcard Bonus Points: <strong>45</strong></li>
+            <li class="list-group-item">Wildcard Penalty Points: <strong>-35</strong></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-6">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Current Standings</h5>
+          <table class="table table-sm">
+              <thead>
+                <tr>
+                  <th scope="col">#</th>
+                  <th scope="col">Name</th>
+                  <th scope="col">Points</th>
+                  <th scope="col">Perfects</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th scope="row">1</th>
+                  <td>Ian Campbell</td>
+                  <td>65</td>
+                  <td>4</td>
+                </tr>
+                <tr>
+                  <th scope="row">2</th>
+                  <td>Nick Carter</td>
+                  <td>58</td>
+                  <td>3</td>
+                </tr>
+                <tr>
+                  <th scope="row">3</th>
+                  <td>Dave Greenhouse</td>
+                  <td>44</td>
+                  <td>2</td>
+                </tr>
+                <tr>
+                  <th scope="row">4</th>
+                  <td>Martin Thomas</td>
+                  <td>43</td>
+                  <td>2</td>
+                </tr>
+                <tr>
+                  <th scope="row">5</th>
+                  <td>Chris Carter</td>
+                  <td>40</td>
+                  <td>1</td>
+                </tr>
+                <tr>
+                  <th scope="row">6</th>
+                  <td>Henry Greenhouse</td>
+                  <td>39</td>
+                  <td>2</td>
+                </tr>
+                <tr>
+                  <th scope="row">7</th>
+                  <td>Jonathan Finn</td>
+                  <td>39</td>
+                  <td>1</td>
+                </tr>
+                <tr>
+                  <th scope="row">8</th>
+                  <td>Ben Thomson</td>
+                  <td>33</td>
+                  <td>1</td>
+                </tr>
+                <tr>
+                  <th scope="row">9</th>
+                  <td>Steve Simmons</td>
+                  <td>33</td>
+                  <td>0</td>
+                </tr>
+                <tr>
+                  <th scope="row">10</th>
+                  <td>Lee Cashmore</td>
+                  <td>31</td>
+                  <td>0</td>
+                </tr>
+                <tr>
+                  <th scope="row">11</th>
+                  <td>Chris Garrett</td>
+                  <td>27</td>
+                  <td>0</td>
+                </tr>
+                <tr>
+                  <th scope="row">12</th>
+                  <td>Martin Griffith</td>
+                  <td>25</td>
+                  <td>1</td>
+                </tr>
+              </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <br/>
+<div class="row">
+  <div class="col-sm-6 mb-3 mb-sm-0">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Latest Results</h5>
+        <p>Mon 7th June 1pm Group A ENG 2-1 POR</p>
+        <p>Mon 7th June 5pm Group A GER 1-1 SWE</p>
+        <p>Mon 7th June 9pm Group B CRO 0-0 UKR</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-6">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Upcoming Fixtures</h5>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}
