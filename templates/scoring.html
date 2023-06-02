@@ -9,5 +9,24 @@
     {% endfor %}
     <h1>Scoring</h1>
     <br/>
+    <p>The following Points will be awarded for the Group Match Predictions:</p>
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item">Predicting the correct outcome (e.g. Home Win, Away Win, Draw) <strong>15 Points</strong></li>
+      <li class="list-group-item">Predicting the correct Home Score <strong>5 Points</strong></li>
+      <li class="list-group-item">Predicting the correct Away Score <strong>5 Points</strong></li>
+      <li class="list-group-item">Bonus for a Perfect Prediction <strong>5 Points</strong></li>
+    </ul>
+    <br/>
+    <p>The following Points will be awarded for the Knock Out Phases:</p>
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item">For each correct Quarter Finalist <strong>25 Points</strong></li>
+      <li class="list-group-item">For each correct Semi Finalist <strong>50 Points</strong></li>
+      <li class="list-group-item">For each correct Finalist <strong>75 Points</strong></li>
+      <li class="list-group-item">For correctly picking the Euro 2024 Winner<strong>100 Points</strong></li>
+    </ul>
+    <br/>
+    <p>Picking a Wildcard Team will allow you to pick up extra Points for every Goal they score.</p>
+    <p>However, you will also be penalised for every Goal they concede.</p>
+    <p>Click the Link below for more details</p>
     <a href="{{ url_for('wildcard_groups') }}" class="btn btn-secondary">Wildcard Groups</a>
 {% endblock %}

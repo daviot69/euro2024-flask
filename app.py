@@ -2,13 +2,19 @@ from flask import Flask, render_template, flash, redirect, url_for
 from forms.user_forms import RegistrationForm, LoginForm
 from models.base import Session, User
 from flask_bcrypt import Bcrypt
-from flask_login import login_user, LoginManager, login_required, logout_user, current_user
+from flask_login import (
+    login_user,
+    LoginManager,
+    login_required,
+    logout_user,
+    current_user,
+)
 
 # Create a Flask Instance
 app = Flask(__name__)
 login_manager = LoginManager()
 login_manager.init_app(app)
-login_manager.login_view='login'
+login_manager.login_view = "login"
 
 
 @login_manager.user_loader
@@ -30,17 +36,17 @@ def index():
 
 @app.route("/rules")
 def rules():
-    return render_template('rules.html')
+    return render_template("rules.html")
 
 
 @app.route("/scoring")
 def scoring():
-    return render_template('scoring.html')
+    return render_template("scoring.html")
 
 
 @app.route("/wildcard_groups")
 def wildcard_groups():
-    return render_template('wildcard_groups.html')
+    return render_template("wildcard_groups.html")
 
 
 @app.errorhandler(404)
@@ -64,21 +70,20 @@ def register():
             .first()
         )
         if not user:
-            pw_hash = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+            pw_hash = bcrypt.generate_password_hash(form.password.data).decode("utf-8")
             session.add(
                 User(
                     email_address=form.email_address.data,
                     forename=form.forename.data,
                     surname=form.surname.data,
                     favourite_club_id=form.favourite_club_id.data,
-                    favourite_country_id=form.favourite_country_id.data,
-                    password_hash=pw_hash
+                    password_hash=pw_hash,
                 )
             )
             session.commit()
             session.close()
             flash("Registered Successfully - Please Log In")
-            return redirect(url_for('login'))
+            return redirect(url_for("login"))
         else:
             flash("This Email Address is already Registered")
     return render_template("register.html", form=form)
@@ -109,19 +114,19 @@ def login():
 @app.route("/user_profile", methods=["GET", "POST"])
 @login_required
 def user_profile():
-    return render_template('user_profile.html')
+    return render_template("user_profile.html")
 
 
 @app.route("/predictions", methods=["GET", "POST"])
 @login_required
 def predictions():
-    return render_template('predictions.html')
+    return render_template("predictions.html")
 
 
 @app.route("/dashboard")
 @login_required
 def dashboard():
-    return render_template('dashboard.html')
+    return render_template("dashboard.html")
 
 
 @app.route("/logout", methods=["GET", "POST"])
@@ -129,4 +134,4 @@ def dashboard():
 def logout():
     logout_user()
     flash("You have been Logged Out")
-    return redirect(url_for('login'))
+    return redirect(url_for("login"))

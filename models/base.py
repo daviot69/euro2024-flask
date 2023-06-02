@@ -1,4 +1,12 @@
-from sqlalchemy import create_engine, Column, String, Integer, DateTime, ForeignKey
+from sqlalchemy import (
+    create_engine,
+    Column,
+    String,
+    Integer,
+    DateTime,
+    Boolean,
+    ForeignKey,
+)
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship, backref
 from datetime import datetime
@@ -83,35 +91,42 @@ class User(Base, UserMixin):
     favourite_club_id = Column(
         Integer, ForeignKey("clubs.id", ondelete="CASCADE"), nullable=False
     )
-    favourite_country_id = Column(
-        Integer, ForeignKey("countries.id", ondelete="CASCADE"), nullable=False
-    )
     password_hash = Column(String(length=200), nullable=False)
     creation_date = Column(DateTime, default=datetime.now())
     last_updated_date = Column(DateTime)
 
-    def __int__(
-        self,
-        forename,
-        surname,
-        email_address,
-        favourite_club_id,
-        favourite_country_id
-    ):
+    def __int__(self, forename, surname, email_address, favourite_club_id):
         self.forename = forename
         self.surname = surname
         self.email_address = email_address
         self.favourite_club_id = favourite_club_id
-        self.favourite_country_id = favourite_country_id
 
 
 class Match(Base):
     __tablename__ = "matches"
     id = Column(Integer, primary_key=True)
-#
+    match_date = Column(DateTime, nullable=False)
+    venue_id = Column(Integer, ForeignKey("venues.id"), nullable=False)
+    stage_id = Column(Integer, ForeignKey("stages.id"), nullable=False)
+    home_team_id = Column(Integer, ForeignKey("clubs.id"), nullable=True)
+    away_team_id = Column(Integer, ForeignKey("clubs.id"), nullable=True)
+    home_score = Column(Integer, nullable=True)
+    away_score = Column(Integer, nullable=True)
+    extra_time = Column(Boolean, nullable=False, default=False)
+    penalties = Column(Boolean, nullable=False, default=False)
+    home_penalties = Column(Integer, nullable=True)
+    away_penalties = Column(Integer, nullable=True)
+
+    def __int__(self, match_date, venue_id, stage_id, home_team_id, away_team_id):
+        self.match_date = match_date
+        self.venue_id = venue_id
+        self.stage_id = stage_id
+        self.home_team_id = home_team_id
+        self.away_team_id = away_team_id
+
+
 #
 # class UserPrediction(Base):
 #     __tablename__ = "user_predictions"
 #     id = Column(Integer, primary_key=True)
 #     user_id = Column(Integer, nullable=False)
-

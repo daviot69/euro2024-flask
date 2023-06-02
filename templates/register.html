@@ -13,20 +13,43 @@
         {{ form.hidden_tag() }}
         {{ form.email_address.label(class="form-label") }}
         {{ form.email_address(class="form-control") }}
-        {{ form.forename.label(class="form-label") }}gi
+        <br/>
+
+        {% for error in form.email_address.errors %}
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                {{ error }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+
+        {{ form.forename.label(class="form-label") }}
         {{ form.forename(class="form-control") }}
+        <br/>
+
+        {% for error in form.forename.errors %}
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                {{ error }}
+            </div>
+        {% endfor %}
         {{ form.surname.label(class="form-label") }}
         {{ form.surname(class="form-control") }}
+        <br/>
         {{ form.favourite_club_id.label(class="form-label") }}
         {{ form.favourite_club_id(class="form-control") }}
-        <br/>
-        {{ form.favourite_country_id.label(class="form-label") }}
-        {{ form.favourite_country_id(class="form-control") }}
         <br/>
         {{ form.password.label(class="form-label") }}
         {{ form.password(class="form-control") }}
         {{ form.password_check.label(class="form-label") }}
         {{ form.password_check(class="form-control") }}
+        <br/>
+
+        {% for error in form.password.errors %}
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                {{ error }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+
         <br/>
         {{ form.submit(class="btn btn-secondary") }}
     </form>
