@@ -105,9 +105,9 @@ class User(Base, UserMixin):
         self.favourite_country_id = favourite_country_id
 
 
-# class Match(Base):
-#     __tablename__ = "matches"
-#     id = Column(Integer, primary_key=True)
+class Match(Base):
+    __tablename__ = "matches"
+    id = Column(Integer, primary_key=True)
 #
 #
 # class UserPrediction(Base):

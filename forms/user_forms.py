@@ -1,17 +1,17 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SelectField, SubmitField
-from wtforms.validators import DataRequired
+from wtforms.validators import ValidationError, DataRequired, Email, EqualTo
 from models.base import Session, Club, Country
 
 
 class RegistrationForm(FlaskForm):
     forename = StringField("Forename", validators=[DataRequired()])
     surname = StringField("Surname", validators=[DataRequired()])
-    email_address = StringField("Email", validators=[DataRequired()])
+    email_address = StringField("Email", validators=[DataRequired(), Email(message="Please Enter a Valid Email Address")])
     favourite_club_id = SelectField("Favourite Club")
     favourite_country_id = SelectField("Favourite Country")
-    password = PasswordField("Password", validators=[DataRequired()])
-    password_check = PasswordField("Repeat Password", validators=[DataRequired()])
+    password = PasswordField("Password", validators=[DataRequired(), EqualTo('password_check', message='Passwords Must Match')])
+    password_check = PasswordField("Confirm Password", validators=[DataRequired()])
 
     submit = SubmitField("Register")
 
