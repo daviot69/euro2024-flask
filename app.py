@@ -1,6 +1,6 @@
 from flask import Flask, render_template, flash, redirect, url_for
 from forms.user_forms import RegistrationForm, LoginForm
-from models.base import Session, User
+from models.base import Session, User, WildcardGroup, Match
 from flask_bcrypt import Bcrypt
 from flask_login import (
     login_user,
@@ -46,7 +46,14 @@ def scoring():
 
 @app.route("/wildcard_groups")
 def wildcard_groups():
-    return render_template("wildcard_groups.html")
+    session = Session()
+    wildcard_group_details = (
+        session.query(WildcardGroup).order_by(WildcardGroup.wildcard_group_name).all()
+    )
+
+    return render_template(
+        "wildcard_groups.html", wildcard_group_details=wildcard_group_details
+    )
 
 
 @app.errorhandler(404)
@@ -120,13 +127,41 @@ def user_profile():
 @app.route("/predictions", methods=["GET", "POST"])
 @login_required
 def predictions():
-    return render_template("predictions.html")
+    session = Session()
+    match_details = session.query(Match).order_by(Match.match_date).all()
+    return render_template("predictions.html", match_details=match_details)
 
 
 @app.route("/dashboard")
 @login_required
 def dashboard():
-    return render_template("dashboard.html")
+    session = Session()
+    upcoming_fixtures = (
+        session.query(Match)
+        .filter_by(home_score=None)
+        .order_by(Match.match_date)
+        .limit(6)
+        .all()
+    )
+
+    latest_results = (
+        session.query(Match)
+        .filter(Match.home_score >= 0)
+        .order_by(Match.match_date)
+        .limit(6)
+        .all()
+    )
+
+    # latest_results = (
+    #     session.query(Match)
+    #     .order_by(Match.match_date)
+    #     .filter_by(Match.home_score is not None)
+    # )
+    return render_template(
+        "dashboard.html",
+        upcoming_fixtures=upcoming_fixtures,
+        latest_results=latest_results,
+    )
 
 
 @app.route("/logout", methods=["GET", "POST"])

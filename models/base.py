@@ -1,3 +1,4 @@
+import sqlalchemy
 from sqlalchemy import (
     create_engine,
     Column,
@@ -19,12 +20,13 @@ Session = sessionmaker(bind=engine)
 Base = declarative_base()
 
 
-class Wildcard_Group(Base):
+class WildcardGroup(Base):
     __tablename__ = "wildcard_groups"
     id = Column(Integer, primary_key=True)
     wildcard_group_name = Column(String(length=20), nullable=False)
     points_bonus = Column(Integer, nullable=False)
     points_penalty = Column(Integer, nullable=False)
+    countries = relationship("Country", backref="wildcard_group", lazy=True)
 
     def __int__(self, wildcard_group_name, points_bonus, points_penalty):
         self.wildcard_group_name = wildcard_group_name
@@ -32,35 +34,11 @@ class Wildcard_Group(Base):
         self.points_penalty = points_penalty
 
 
-class Country(Base):
-    __tablename__ = "countries"
-    id = Column(Integer, primary_key=True)
-    country_name = Column(String(length=100), nullable=False)
-    country_shortcode = Column(String(length=10), nullable=False)
-    wildcard_group_id = Column(
-        Integer,
-        ForeignKey("wildcard_groups.id", ondelete="CASCADE"),
-    )
-
-    def __int__(self, country_name, country_shortcode, wildcard_group_id):
-        self.country_name = country_name
-        self.country_shortcode = country_shortcode
-        self.wildcard_group_id = wildcard_group_id
-
-
-class Club(Base):
-    __tablename__ = "clubs"
-    id = Column(Integer, primary_key=True)
-    club_name = Column(String(length=100), nullable=False)
-
-    def __int__(self, club_name):
-        self.club_name = club_name
-
-
 class Stage(Base):
     __tablename__ = "stages"
     id = Column(Integer, primary_key=True)
     stage_description = Column(String(length=50), nullable=False)
+    matches = relationship("Match", backref="stage")
 
     def __int__(self, stage_description):
         self.stage_description = stage_description
@@ -74,7 +52,7 @@ class Venue(Base):
     country_id = Column(
         Integer, ForeignKey("countries.id", ondelete="CASCADE"), nullable=False
     )
-    country = relationship("Country", backref="venues")
+    matches = relationship("Match", backref="venue")
 
     def __int__(self, venue_name, city, country_id):
         self.venue_name = venue_name
@@ -108,14 +86,17 @@ class Match(Base):
     match_date = Column(DateTime, nullable=False)
     venue_id = Column(Integer, ForeignKey("venues.id"), nullable=False)
     stage_id = Column(Integer, ForeignKey("stages.id"), nullable=False)
-    home_team_id = Column(Integer, ForeignKey("clubs.id"), nullable=True)
-    away_team_id = Column(Integer, ForeignKey("clubs.id"), nullable=True)
+    home_team_id = Column(Integer, ForeignKey("countries.id"), nullable=True)
+    away_team_id = Column(Integer, ForeignKey("countries.id"), nullable=True)
     home_score = Column(Integer, nullable=True)
     away_score = Column(Integer, nullable=True)
     extra_time = Column(Boolean, nullable=False, default=False)
     penalties = Column(Boolean, nullable=False, default=False)
     home_penalties = Column(Integer, nullable=True)
     away_penalties = Column(Integer, nullable=True)
+
+    home_country = relationship("Country", foreign_keys="Match.home_team_id")
+    away_country = relationship("Country", foreign_keys="Match.away_team_id")
 
     def __int__(self, match_date, venue_id, stage_id, home_team_id, away_team_id):
         self.match_date = match_date
@@ -125,8 +106,56 @@ class Match(Base):
         self.away_team_id = away_team_id
 
 
-#
-# class UserPrediction(Base):
-#     __tablename__ = "user_predictions"
-#     id = Column(Integer, primary_key=True)
-#     user_id = Column(Integer, nullable=False)
+class UserEntry(Base):
+    __tablename__ = "user_entries"
+    id = Column(Integer, primary_key=True)
+    user_id = Column(
+        Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+    )
+    wildcard_team_id = Column(
+        Integer, ForeignKey("countries.id", ondelete="CASCADE"), nullable=False
+    )
+    creation_date = Column(DateTime, default=datetime.now())
+    last_updated_date = Column(DateTime, nullable=True)
+    entry_fee_paid = Column(Boolean, default=False)
+
+
+class MatchPrediction(Base):
+    __tablename__ = "match_predictions"
+    id = Column(Integer, primary_key=True)
+    user_id = Column(
+        Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+    )
+    match_id = Column(
+        Integer, ForeignKey("matches.id", ondelete="CASCADE"), nullable=False
+    )
+    home_score_prediction = Column(Integer, nullable=True)
+    away_score_prediction = Column(Integer, nullable=True)
+    prediction_points = Column(Integer, nullable=True)
+    wildcard_team_id = Column(
+        Integer, ForeignKey("countries.id", ondelete="CASCADE"), nullable=False
+    )
+    wildcard_bonus_points = Column(Integer, nullable=True)
+    wildcard_penalty_points = Column(Integer, nullable=True)
+
+
+class Club(Base):
+    __tablename__ = "clubs"
+    id = Column(Integer, primary_key=True)
+    club_name = Column(String(length=100), nullable=False)
+
+    def __int__(self, club_name):
+        self.club_name = club_name
+
+
+class Country(Base):
+    __tablename__ = "countries"
+    id = Column(Integer, primary_key=True)
+    country_name = Column(String(length=100), nullable=False)
+    country_shortcode = Column(String(length=10), nullable=False)
+    wildcard_group_id = Column(Integer, ForeignKey("wildcard_groups.id"))
+
+    def __int__(self, country_name, country_shortcode, wildcard_group_id):
+        self.country_name = country_name
+        self.country_shortcode = country_shortcode
+        self.wildcard_group_id = wildcard_group_id

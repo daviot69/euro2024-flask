@@ -5,7 +5,7 @@ from models.base import (
     Base,
     Country,
     Club,
-    Wildcard_Group,
+    WildcardGroup,
     Stage,
     Venue,
     Match,
@@ -15,95 +15,88 @@ Base.metadata.create_all(engine)
 session = Session()
 
 session.add(
-    Wildcard_Group(wildcard_group_name="Group 1", points_bonus=10, points_penalty=20)
+    WildcardGroup(wildcard_group_name="Group 1", points_bonus=10, points_penalty=20)
 )
 session.add(
-    Wildcard_Group(wildcard_group_name="Group 2", points_bonus=15, points_penalty=15)
+    WildcardGroup(wildcard_group_name="Group 2", points_bonus=15, points_penalty=15)
 )
 session.add(
-    Wildcard_Group(wildcard_group_name="Group 3", points_bonus=20, points_penalty=10)
+    WildcardGroup(wildcard_group_name="Group 3", points_bonus=20, points_penalty=10)
 )
 session.add(
-    Wildcard_Group(wildcard_group_name="Group 4", points_bonus=25, points_penalty=5)
+    WildcardGroup(wildcard_group_name="Group 4", points_bonus=25, points_penalty=5)
 )
 
+session.commit()
 
 session.add(
-    Country(country_name="Germany", country_shortcode="GER", wildcard_group_id=None)
+    Country(country_name="Germany", country_shortcode="GER", wildcard_group_id=1)
 )
 session.add(
-    Country(country_name="Sweden", country_shortcode="SWE", wildcard_group_id=None)
+    Country(country_name="Sweden", country_shortcode="SWE", wildcard_group_id=2)
+)
+session.add(Country(country_name="Spain", country_shortcode="SPA", wildcard_group_id=3))
+session.add(
+    Country(country_name="France", country_shortcode="FRA", wildcard_group_id=4)
 )
 session.add(
-    Country(country_name="Spain", country_shortcode="SPA", wildcard_group_id=None)
+    Country(country_name="Portugal", country_shortcode="POR", wildcard_group_id=1)
+)
+session.add(Country(country_name="Wales", country_shortcode="WAL", wildcard_group_id=2))
+session.add(
+    Country(country_name="Scotland", country_shortcode="SCO", wildcard_group_id=3)
 )
 session.add(
-    Country(country_name="France", country_shortcode="FRA", wildcard_group_id=None)
+    Country(country_name="England", country_shortcode="ENG", wildcard_group_id=4)
 )
 session.add(
-    Country(country_name="Portugal", country_shortcode="POR", wildcard_group_id=None)
+    Country(country_name="Denmark", country_shortcode="DEN", wildcard_group_id=1)
 )
 session.add(
-    Country(country_name="Wales", country_shortcode="WAL", wildcard_group_id=None)
+    Country(country_name="Holland", country_shortcode="HOL", wildcard_group_id=2)
 )
 session.add(
-    Country(country_name="Scotland", country_shortcode="SCO", wildcard_group_id=None)
+    Country(country_name="Belgium", country_shortcode="BEL", wildcard_group_id=3)
 )
 session.add(
-    Country(country_name="England", country_shortcode="ENG", wildcard_group_id=None)
+    Country(country_name="Turkey", country_shortcode="TUR", wildcard_group_id=4)
 )
 session.add(
-    Country(country_name="Denmark", country_shortcode="DEN", wildcard_group_id=None)
+    Country(country_name="Ukraine", country_shortcode="UKR", wildcard_group_id=1)
+)
+session.add(Country(country_name="Italy", country_shortcode="ITA", wildcard_group_id=2))
+session.add(
+    Country(country_name="Croatia", country_shortcode="CRO", wildcard_group_id=3)
 )
 session.add(
-    Country(country_name="Holland", country_shortcode="HOL", wildcard_group_id=None)
+    Country(country_name="Romania", country_shortcode="ROM", wildcard_group_id=4)
 )
 session.add(
-    Country(country_name="Belgium", country_shortcode="BEL", wildcard_group_id=None)
+    Country(country_name="Greece", country_shortcode="GRE", wildcard_group_id=1)
 )
 session.add(
-    Country(country_name="Turkey", country_shortcode="TUR", wildcard_group_id=None)
+    Country(country_name="Czech Republic", country_shortcode="CZE", wildcard_group_id=2)
 )
 session.add(
-    Country(country_name="Ukraine", country_shortcode="UKR", wildcard_group_id=None)
+    Country(country_name="Poland", country_shortcode="POL", wildcard_group_id=3)
 )
 session.add(
-    Country(country_name="Italy", country_shortcode="ITA", wildcard_group_id=None)
+    Country(country_name="Austria", country_shortcode="AUS", wildcard_group_id=4)
 )
 session.add(
-    Country(country_name="Croatia", country_shortcode="CRO", wildcard_group_id=None)
+    Country(country_name="Serbia", country_shortcode="SER", wildcard_group_id=1)
 )
 session.add(
-    Country(country_name="Romania", country_shortcode="ROM", wildcard_group_id=None)
+    Country(country_name="Hungary", country_shortcode="HUN", wildcard_group_id=2)
+)
+session.add(
+    Country(country_name="Slovenia", country_shortcode="SLO", wildcard_group_id=3)
+)
+session.add(
+    Country(country_name="Switzerland", country_shortcode="SWI", wildcard_group_id=4)
 )
 
-
-session.add(
-    Country(country_name="Greece", country_shortcode="GRE", wildcard_group_id=None)
-)
-session.add(
-    Country(
-        country_name="Czech Republic", country_shortcode="CZE", wildcard_group_id=None
-    )
-)
-session.add(
-    Country(country_name="Poland", country_shortcode="POL", wildcard_group_id=None)
-)
-session.add(
-    Country(country_name="Austria", country_shortcode="AUS", wildcard_group_id=None)
-)
-session.add(
-    Country(country_name="Serbia", country_shortcode="SER", wildcard_group_id=None)
-)
-session.add(
-    Country(country_name="Hungary", country_shortcode="HUN", wildcard_group_id=None)
-)
-session.add(
-    Country(country_name="Slovenia", country_shortcode="SLO", wildcard_group_id=None)
-)
-session.add(
-    Country(country_name="Switzerland", country_shortcode="SWI", wildcard_group_id=None)
-)
+session.commit()
 
 session.add(Club(club_name="Accrington Stanley"))
 session.add(Club(club_name="AFC Wimbledon"))
@@ -222,6 +215,7 @@ session.add(Club(club_name="Wycombe Wanderers"))
 session.add(Club(club_name="Yeovil Town"))
 session.add(Club(club_name="York City"))
 
+session.commit()
 
 session.add(Venue(venue_name="Olympiastadion", city="Berlin", country_id=1))
 session.add(Venue(venue_name="Cologne Stadium", city="Cologne", country_id=1))
@@ -233,6 +227,8 @@ session.add(Venue(venue_name="Volksparkstadion", city="Hamburg", country_id=1))
 session.add(Venue(venue_name="Leipzig Stadium", city="Leipzig", country_id=1))
 session.add(Venue(venue_name="Munich Football Arena", city="Munich", country_id=1))
 session.add(Venue(venue_name="Stuttgart Arena", city="Stuttgart", country_id=1))
+
+session.commit()
 
 session.add(Stage(stage_description="Group A"))
 session.add(Stage(stage_description="Group B"))

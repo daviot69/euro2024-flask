@@ -125,9 +125,13 @@
     <div class="card">
       <div class="card-body">
         <h5 class="card-title">Latest Results</h5>
-        <p>Mon 7th June 1pm Group A ENG 2-1 POR</p>
-        <p>Mon 7th June 5pm Group A GER 1-1 SWE</p>
-        <p>Mon 7th June 9pm Group B CRO 0-0 UKR</p>
+          {% if latest_results|length > 0 %}
+            {% for fixture in latest_results %}
+            <p>{{ fixture.match_date }} {{ fixture.stage.stage_description }}  {{ fixture.home_country.country_name }} {{ fixture.home_score }} - {{ fixture.away_score }} {{ fixture.away_country.country_name }}</p>
+            {% endfor %}
+          {% else %}
+            <p>No Results available</p>
+          {% endif %}
       </div>
     </div>
   </div>
@@ -135,8 +139,12 @@
     <div class="card">
       <div class="card-body">
         <h5 class="card-title">Upcoming Fixtures</h5>
+          {% for fixture in upcoming_fixtures %}
+            <p>{{ fixture.match_date }} {{ fixture.stage.stage_description }}  {{ fixture.home_country.country_shortcode }} - {{ fixture.away_country.country_shortcode }}</p>
+          {% endfor %}
       </div>
     </div>
   </div>
+
 
 {% endblock %}

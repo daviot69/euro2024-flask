@@ -9,76 +9,52 @@
 {% endfor %}
 <h1>Wildcard Groups</h1>
 <br/>
-  <p>Picking a Wildcard Team is optional. But, if you choose wisely it could boost your Points substantially.</p>
-  <p>Once the Tournament has started you will be able to change you Wildcard Team twice at any time.</p>
-  <p>Changes to the Wildcard Team will only take effect from the following day.</p>
-  <div class="row">
+<p>Picking a Wildcard Team is optional. But, if you choose wisely it could boost your Points substantially.</p>
+<p>Once the Tournament has started you will be able to change you Wildcard Team twice at any time.</p>
+<p>Changes to the Wildcard Team will only take effect from the following day.</p>
+
+{% for group in wildcard_group_details %}
+  {% if loop.index is even %}
     <div class="col-sm-6 mb-3 mb-sm-0">
       <div class="card">
         <div class="card-body">
-          <h5 class="card-title">Group 1</h5>
-            <p>Teams in this Group will score <strong>10 Points</strong> for each goal scored and lose <strong>20 Points</strong> for each goal conceded</p>
-            <ul class="list-group">
-              <li class="list-group-item">France</li>
-              <li class="list-group-item">Germany</li>
-              <li class="list-group-item">England</li>
-              <li class="list-group-item">Spain</li>
-              <li class="list-group-item">Portugal</li>
-              <li class="list-group-item">Belgium</li>
-            </ul>
-        </div>
-      </div>
-    </div>
-    <div class="col-sm-6">
-      <div class="card">
-        <div class="card-body">
-          <h5 class="card-title">Group 2</h5>
-            <p>Teams in this Group will score <strong>15 Points</strong> for each goal scored and lose <strong>15 Points</strong> for each goal conceded</p>
-            <ul class="list-group">
-              <li class="list-group-item">Holland</li>
-              <li class="list-group-item">Italy</li>
-              <li class="list-group-item">Czech Republic</li>
-              <li class="list-group-item">Poland</li>
-              <li class="list-group-item">Switzerland</li>
-              <li class="list-group-item">Denmark</li>
-            </ul>
+          <h5 class="card-title">{{ group.wildcard_group_name }}</h5>
+          <p>Teams in this Group will score <strong>{{ group.points_bonus }} Points</strong> for each goal scored and lose <strong>{{ group.points_penalty }} Points</strong> for each goal conceded</p>
+          <ul class="list-group">
+            {% for c in group.countries %}
+              {% if loop.index is even %}
+                <li class="list-group-item">{{ c.country_name }}</li>
+              {% else %}
+                <li class="list-group-item list-group-item-secondary">{{ c.country_name }}</li>
+              {% endif %}
+            {% endfor %}
+          </ul>
         </div>
       </div>
     </div>
   </div>
   <br/>
-<div class="row">
-  <div class="col-sm-6 mb-3 mb-sm-0">
-    <div class="card">
-      <div class="card-body">
-        <h5 class="card-title">Group 3</h5>
-          <p>Teams in this Group will score <strong>20 Points</strong> for each goal scored and lose <strong>10 Points</strong> for each goal conceded</p>
+{% else %}
+  <div class="row">
+    <div class="col-sm-6 mb-3 mb-sm-0">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">{{ group.wildcard_group_name }}</h5>
+          <p>Teams in this Group will score <strong>{{ group.points_bonus }} Points</strong> for each goal scored and lose <strong>{{ group.points_penalty }} Points</strong> for each goal conceded</p>
           <ul class="list-group">
-              <li class="list-group-item">Sweden</li>
-              <li class="list-group-item">Turkey</li>
-              <li class="list-group-item">Ukraine</li>
-              <li class="list-group-item">Croatia</li>
-              <li class="list-group-item">Austria</li>
-              <li class="list-group-item">Greece</li>
+            {% for c in group.countries %}
+              {% if loop.index is even %}
+                <li class="list-group-item">{{ c.country_name }}</li>
+              {% else %}
+                <li class="list-group-item list-group-item-secondary">{{ c.country_name }}</li>
+              {% endif %}
+            {% endfor %}
           </ul>
+        </div>
       </div>
     </div>
-  </div>
-  <div class="col-sm-6">
-    <div class="card">
-      <div class="card-body">
-        <h5 class="card-title">Group 4</h5>
-        <p>Teams in this Group will score <strong>25 Points</strong> for each goal scored and lose <strong>5 Points</strong> for each goal conceded</p>
-          <ul class="list-group">
-              <li class="list-group-item">Wales</li>
-              <li class="list-group-item">Scotland</li>
-              <li class="list-group-item">Romania</li>
-              <li class="list-group-item">Serbia</li>
-              <li class="list-group-item">Hungary</li>
-              <li class="list-group-item">Slovenia</li>
-          </ul>
-      </div>
-    </div>
-  </div>
-</div>
+{% endif %}
+
+{% endfor %}
+
 {% endblock %}
