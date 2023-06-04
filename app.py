@@ -1,5 +1,5 @@
 from flask import Flask, render_template, flash, redirect, url_for
-from forms.user_forms import RegistrationForm, LoginForm
+from forms.user_forms import RegistrationForm, LoginForm, PredictionForm
 from models.base import Session, User, WildcardGroup, Match
 from flask_bcrypt import Bcrypt
 from flask_login import (
@@ -127,9 +127,15 @@ def user_profile():
 @app.route("/predictions", methods=["GET", "POST"])
 @login_required
 def predictions():
+    form = PredictionForm()
     session = Session()
-    match_details = session.query(Match).order_by(Match.match_date).all()
-    return render_template("predictions.html", match_details=match_details)
+    match_details = (
+        session.query(Match)
+        .filter(Match.stage_id.in_([1, 2, 3, 4, 5, 6]))
+        .order_by(Match.match_date)
+        .all()
+    )
+    return render_template("predictions.html", form=form, match_details=match_details)
 
 
 @app.route("/dashboard")

@@ -1,6 +1,23 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SelectField, SubmitField
-from wtforms.validators import ValidationError, InputRequired, Email, EqualTo, Length
+from wtforms import (
+    StringField,
+    PasswordField,
+    IntegerField,
+    SelectField,
+    SubmitField,
+    HiddenField,
+    Form,
+    FormField,
+    FieldList,
+)
+from wtforms.validators import (
+    ValidationError,
+    InputRequired,
+    Email,
+    EqualTo,
+    Length,
+    NumberRange,
+)
 from models.base import Session, Club, Country
 
 
@@ -46,3 +63,14 @@ class LoginForm(FlaskForm):
     password = PasswordField("Password", validators=[InputRequired()])
 
     submit = SubmitField("Login")
+
+
+class MatchPrediction(Form):
+    match_id = HiddenField()
+    home_score = IntegerField(validators=[NumberRange(min=0, max=20)])
+    away_score = IntegerField(validators=[NumberRange(min=0, max=20)])
+
+
+class PredictionForm(FlaskForm):
+    prediction = FieldList(FormField(MatchPrediction), min_entries=36)
+    submit = SubmitField("Submit")
