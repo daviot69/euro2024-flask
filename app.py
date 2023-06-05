@@ -1,6 +1,6 @@
 from flask import Flask, render_template, flash, redirect, url_for
 from forms.user_forms import RegistrationForm, LoginForm, PredictionForm
-from models.base import Session, User, WildcardGroup, Match
+from models.base import Session, User, WildcardGroup, Match, UserEntry, MatchPrediction
 from flask_bcrypt import Bcrypt
 from flask_login import (
     login_user,
@@ -129,13 +129,40 @@ def user_profile():
 def predictions():
     form = PredictionForm()
     session = Session()
-    match_details = (
-        session.query(Match)
-        .filter(Match.stage_id.in_([1, 2, 3, 4, 5, 6]))
-        .order_by(Match.match_date)
-        .all()
+
+    entry_found = False
+    entry = (
+        session.query(UserEntry).filter(UserEntry.user_id == current_user.id).first()
     )
-    return render_template("predictions.html", form=form, match_details=match_details)
+    if entry:
+        entry_found = True
+
+        # match_details = (
+        #     session.query(Match)
+        #     .filter(Match.stage_id.in_([1, 2, 3, 4, 5, 6]))
+        #     .order_by(Match.match_date)
+        #     .all()
+        # )
+
+        group_predictions = (
+            session.query(MatchPrediction)
+            .filter(MatchPrediction.user_id == current_user.id)
+            .filter(MatchPrediction.match.stage_id.in_([1, 2, 3, 4, 5, 6]))
+            .order_by(MatchPrediction.match.match_date)
+            .all()
+        )
+    else:
+        group_predictions = ()
+    # for match in form.prediction:
+    #     match.home_score.data = 1
+    #     match.away_score.data = 2
+
+    return render_template(
+        "predictions.html",
+        form=form,
+        match_details=group_predictions,
+        entry_found=entry_found,
+    )
 
 
 @app.route("/dashboard")
@@ -176,3 +203,22 @@ def logout():
     logout_user()
     flash("You have been Logged Out")
     return redirect(url_for("login"))
+
+
+@app.route("/initialise_predictions")
+@login_required
+def initialise_predictions():
+    session = Session()
+    entry = UserEntry(user_id=current_user.id)
+    session.add(entry)
+    session.commit()
+
+    match_details = session.query(Match).order_by(Match.match_date).all()
+
+    for match in match_details:
+        prediction = MatchPrediction(user_id=current_user.id, match_id=match.id)
+        session.add(prediction)
+
+    session.commit()
+    session.close()
+    return redirect(url_for("predictions"))

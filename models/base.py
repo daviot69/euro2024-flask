@@ -69,15 +69,19 @@ class User(Base, UserMixin):
     favourite_club_id = Column(
         Integer, ForeignKey("clubs.id", ondelete="CASCADE"), nullable=False
     )
+    administrator = Column(Boolean, default=False, nullable=False)
     password_hash = Column(String(length=200), nullable=False)
     creation_date = Column(DateTime, default=datetime.now())
     last_updated_date = Column(DateTime)
 
-    def __int__(self, forename, surname, email_address, favourite_club_id):
+    def __int__(
+        self, forename, surname, email_address, favourite_club_id, administrator
+    ):
         self.forename = forename
         self.surname = surname
         self.email_address = email_address
         self.favourite_club_id = favourite_club_id
+        self.administrator = administrator
 
 
 class Match(Base):
@@ -113,8 +117,10 @@ class UserEntry(Base):
         Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False
     )
     wildcard_team_id = Column(
-        Integer, ForeignKey("countries.id", ondelete="CASCADE"), nullable=False
+        Integer, ForeignKey("countries.id", ondelete="CASCADE"), nullable=True
     )
+    num_wildcard_changes = Column(Integer, default=0, nullable=False)
+    total_goals_prediction = Column(Integer, nullable=True)
     creation_date = Column(DateTime, default=datetime.now())
     last_updated_date = Column(DateTime, nullable=True)
     entry_fee_paid = Column(Boolean, default=False)
@@ -131,12 +137,15 @@ class MatchPrediction(Base):
     )
     home_score_prediction = Column(Integer, nullable=True)
     away_score_prediction = Column(Integer, nullable=True)
-    prediction_points = Column(Integer, nullable=True)
+    prediction_points = Column(Integer, default=0, nullable=False)
     wildcard_team_id = Column(
-        Integer, ForeignKey("countries.id", ondelete="CASCADE"), nullable=False
+        Integer, ForeignKey("countries.id", ondelete="CASCADE"), nullable=True
     )
-    wildcard_bonus_points = Column(Integer, nullable=True)
-    wildcard_penalty_points = Column(Integer, nullable=True)
+    wildcard_bonus_points = Column(Integer, default=0, nullable=False)
+    wildcard_penalty_points = Column(Integer, default=0, nullable=False)
+
+    # match = relationship("Match", foreign_keys="MatchPrediction.match_id")
+    match = relationship("Match", backref="match_id", lazy=True)
 
 
 class Club(Base):

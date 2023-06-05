@@ -7,7 +7,9 @@
       <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
   {% endfor %}
-<!--  <h1>Fixtures</h1>-->
+  <h1>Group Match Predictions</h1>
+  <p>You can make as many changes up util the start of the Opening Match</p>
+  <p>After that you will only be able to change your Wildcard Team (A maximum of two times)</p>
 <!--  Count = {{ match_details|length }}-->
 <!--  <br/>-->
 <!--  {% for match in match_details %}-->
@@ -18,11 +20,25 @@
 <!--    {% endif %}-->
 <!--    <br/>-->
 <!--  {% endfor %}-->
+  {% if entry_found %}
 
-  {% for nested in form.prediction %}
-    {{ match_details[loop.index -1].stage.stage_description }}  {{ match_details[loop.index -1].home_country.country_shortcode|capitalize }} {{ nested.home_score }} - {{ nested.away_score }} {{ match_details[loop.index -1].away_country.country_shortcode|capitalize }}
-    <br/><br/>
-  {% endfor %}
-  <br/>
-  {{ form.submit(class="btn btn-secondary") }}
+    {% for nested in form.prediction %}
+
+        <ul class="list-group list-group-horizontal">
+          <li class="list-group-item" style="width: 140px;">{{ match_details[loop.index -1].home_country.country_name|capitalize }}</li>
+          <li class="list-group-item">{{ nested.home_score(class="form-control-sm") }}</li>
+          <li class="list-group-item">{{ nested.away_score(class="form-control-sm") }}</li>
+          <li class="list-group-item" style="width: 140px;">{{ match_details[loop.index -1].away_country.country_name|capitalize }}</li>
+        </ul>
+
+    {% endfor %}
+
+    <br/>
+    {{ form.submit(class="btn btn-secondary") }}
+
+  {% else %}
+
+    <a href="{{ url_for('initialise_predictions') }}" class="btn btn-secondary btn-lg" role="button">Click To Initialise Your Predictions</a>
+
+  {% endif %}
 {% endblock %}
