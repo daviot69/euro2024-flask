@@ -66,11 +66,16 @@ class LoginForm(FlaskForm):
 
 
 class MatchPrediction(Form):
+    prediction_id = HiddenField()
     match_id = HiddenField()
     home_score = IntegerField(validators=[NumberRange(min=0, max=20)])
     away_score = IntegerField(validators=[NumberRange(min=0, max=20)])
 
 
 class PredictionForm(FlaskForm):
-    prediction = FieldList(FormField(MatchPrediction), min_entries=36)
-    submit = SubmitField("Submit")
+    total_goals = IntegerField(
+        "Total Goals in Tournament (not including Penalty Shootouts",
+        validators=[NumberRange(min=0, max=9999)],
+    )
+    prediction = FieldList(FormField(MatchPrediction), max_entries=36)
+    # submit = SubmitField("Submit")

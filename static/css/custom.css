@@ -1,0 +1,13 @@
+.score_input {
+    width: 50px;
+}
+
+.score_label_left {
+    width: 150px;
+    text-align: right;
+}
+
+.score_label_right {
+    width: 150px;
+    text-align: left;
+}

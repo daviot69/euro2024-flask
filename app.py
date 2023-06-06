@@ -1,6 +1,16 @@
+from collections import namedtuple
+from datetime import datetime
 from flask import Flask, render_template, flash, redirect, url_for
 from forms.user_forms import RegistrationForm, LoginForm, PredictionForm
-from models.base import Session, User, WildcardGroup, Match, UserEntry, MatchPrediction
+from models.base import (
+    Session,
+    User,
+    WildcardGroup,
+    Match,
+    UserEntry,
+    MatchPrediction,
+    Select,
+)
 from flask_bcrypt import Bcrypt
 from flask_login import (
     login_user,
@@ -9,6 +19,7 @@ from flask_login import (
     logout_user,
     current_user,
 )
+import sys
 
 # Create a Flask Instance
 app = Flask(__name__)
@@ -127,13 +138,36 @@ def user_profile():
 @app.route("/predictions", methods=["GET", "POST"])
 @login_required
 def predictions():
-    form = PredictionForm()
+    predict = namedtuple(
+        "Predict", ["prediction_id", "match_id", "home_score", "away_score"]
+    )
+
     session = Session()
 
     entry_found = False
     entry = (
         session.query(UserEntry).filter(UserEntry.user_id == current_user.id).first()
     )
+    form_predictions = []
+    user_predictions = (
+        session.query(MatchPrediction)
+        .filter(MatchPrediction.user_id == current_user.id)
+        .order_by(MatchPrediction.match_id)
+        .limit(36)
+        .all()
+    )
+    for match_prediction in user_predictions:
+        match_prediction = predict(
+            match_prediction.id,
+            match_prediction.match_id,
+            match_prediction.home_score_prediction,
+            match_prediction.away_score_prediction,
+        )
+        form_predictions.append(match_prediction)
+
+    x = {"total_goals": entry.total_goals_prediction, "prediction": form_predictions}
+
+    form = PredictionForm(data=x)
     if entry:
         entry_found = True
 
@@ -147,15 +181,26 @@ def predictions():
         group_predictions = (
             session.query(MatchPrediction)
             .filter(MatchPrediction.user_id == current_user.id)
-            .filter(MatchPrediction.match.stage_id.in_([1, 2, 3, 4, 5, 6]))
-            .order_by(MatchPrediction.match.match_date)
+            #   .filter(MatchPrediction.id <= 36)
+            # .filter(MatchPrediction.match.stage_id.in_([1, 2, 3, 4, 5, 6]))
+            .order_by(MatchPrediction.match_id)
             .all()
         )
     else:
         group_predictions = ()
-    # for match in form.prediction:
-    #     match.home_score.data = 1
-    #     match.away_score.data = 2
+
+    if form.validate_on_submit():
+        entry.total_goals_prediction = form.total_goals.data
+        entry.last_updated_date = datetime.now()
+        session.commit()
+        for field in form.prediction:
+            x = session.query(MatchPrediction).get(field.prediction_id.data)
+            x.home_score_prediction = field.home_score.data
+            x.away_score_prediction = field.away_score.data
+            session.commit()
+
+        flash("Your Predictions have been Updated successfully")
+        return redirect(url_for("predictions"))
 
     return render_template(
         "predictions.html",

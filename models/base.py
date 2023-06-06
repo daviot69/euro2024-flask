@@ -7,6 +7,7 @@ from sqlalchemy import (
     DateTime,
     Boolean,
     ForeignKey,
+    Select,
 )
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship, backref
@@ -84,6 +85,28 @@ class User(Base, UserMixin):
         self.administrator = administrator
 
 
+class MatchPrediction(Base):
+    __tablename__ = "match_predictions"
+    id = Column(Integer, primary_key=True)
+    user_id = Column(
+        Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+    )
+    match_id = Column(
+        Integer, ForeignKey("matches.id", ondelete="CASCADE"), nullable=False
+    )
+    home_score_prediction = Column(Integer, nullable=True)
+    away_score_prediction = Column(Integer, nullable=True)
+    prediction_points = Column(Integer, default=0, nullable=False)
+    wildcard_team_id = Column(
+        Integer, ForeignKey("countries.id", ondelete="CASCADE"), nullable=True
+    )
+    wildcard_bonus_points = Column(Integer, default=0, nullable=False)
+    wildcard_penalty_points = Column(Integer, default=0, nullable=False)
+
+    match = relationship("Match", foreign_keys="MatchPrediction.match_id")
+    # match = relationship("Match", backref="match_id", lazy=True)
+
+
 class Match(Base):
     __tablename__ = "matches"
     id = Column(Integer, primary_key=True)
@@ -124,28 +147,6 @@ class UserEntry(Base):
     creation_date = Column(DateTime, default=datetime.now())
     last_updated_date = Column(DateTime, nullable=True)
     entry_fee_paid = Column(Boolean, default=False)
-
-
-class MatchPrediction(Base):
-    __tablename__ = "match_predictions"
-    id = Column(Integer, primary_key=True)
-    user_id = Column(
-        Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False
-    )
-    match_id = Column(
-        Integer, ForeignKey("matches.id", ondelete="CASCADE"), nullable=False
-    )
-    home_score_prediction = Column(Integer, nullable=True)
-    away_score_prediction = Column(Integer, nullable=True)
-    prediction_points = Column(Integer, default=0, nullable=False)
-    wildcard_team_id = Column(
-        Integer, ForeignKey("countries.id", ondelete="CASCADE"), nullable=True
-    )
-    wildcard_bonus_points = Column(Integer, default=0, nullable=False)
-    wildcard_penalty_points = Column(Integer, default=0, nullable=False)
-
-    # match = relationship("Match", foreign_keys="MatchPrediction.match_id")
-    match = relationship("Match", backref="match_id", lazy=True)
 
 
 class Club(Base):
