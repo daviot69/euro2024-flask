@@ -17,6 +17,9 @@
     {{ form.total_goals.label(class="form-label") }}
     {{ form.total_goals(class="form-control-sm") }}
     <br/>
+    {{ form.wildcard_team_id.label(class="form-label") }}
+    {{ form.wildcard_team_id(class="form-control") }}
+    <br/>
     <br/>
     <input type="submit" class="btn btn-secondary" value="Update Predictions" />
     <br/>
@@ -28,6 +31,9 @@
     {% for nested in form.prediction %}
 
         <ul class="list-group list-group-horizontal">
+          <ul class="list-group list-group-horizontal">
+          <li class="list-group-item">{{ match_details[loop.index -1].match.match_date.strftime('%d %B %Y') }} {{ match_details[loop.index -1].match.stage.stage_description }}</li>
+          </ul>
           <li class="list-group-item score_label_left">{{ match_details[loop.index -1].match.home_country.country_name }}</li>
           <li class="list-group-item">{{ nested.home_score(class="form-control-sm score_input") }}</li>
           <li class="list-group-item">{{ nested.away_score(class="form-control-sm score_input") }}</li>

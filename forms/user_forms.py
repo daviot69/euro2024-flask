@@ -74,8 +74,19 @@ class MatchPrediction(Form):
 
 class PredictionForm(FlaskForm):
     total_goals = IntegerField(
-        "Total Goals in Tournament (not including Penalty Shootouts",
+        "Total Goals in Tournament (not including Penalty Shootouts)",
         validators=[NumberRange(min=0, max=9999)],
     )
+    wildcard_team_id = SelectField("Wildcard Team")
     prediction = FieldList(FormField(MatchPrediction), max_entries=36)
     # submit = SubmitField("Submit")
+
+    def __init__(self, *args, **kwargs):
+        super(PredictionForm, self).__init__(*args, **kwargs)
+        session = Session()
+        self.wildcard_team_id.choices = [
+            (country.id, country.country_name)
+            for country in session.query(Country).order_by(Country.country_name).all()
+        ]
+
+        session.close()

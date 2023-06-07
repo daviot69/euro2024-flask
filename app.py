@@ -19,7 +19,6 @@ from flask_login import (
     logout_user,
     current_user,
 )
-import sys
 
 # Create a Flask Instance
 app = Flask(__name__)
@@ -165,7 +164,11 @@ def predictions():
         )
         form_predictions.append(match_prediction)
 
-    x = {"total_goals": entry.total_goals_prediction, "prediction": form_predictions}
+    x = {
+        "total_goals": entry.total_goals_prediction,
+        "wildcard_team_id": entry.wildcard_team_id,
+        "prediction": form_predictions,
+    }
 
     form = PredictionForm(data=x)
     if entry:
@@ -191,13 +194,25 @@ def predictions():
 
     if form.validate_on_submit():
         entry.total_goals_prediction = form.total_goals.data
+        entry.wildcard_team_id = form.wildcard_team_id.data
         entry.last_updated_date = datetime.now()
         session.commit()
         for field in form.prediction:
             x = session.query(MatchPrediction).get(field.prediction_id.data)
             x.home_score_prediction = field.home_score.data
             x.away_score_prediction = field.away_score.data
+            #   x.wildcard_team_id = form.wildcard_team_id.data
             session.commit()
+
+        user_predictions = (
+            session.query(MatchPrediction)
+            .filter(MatchPrediction.user_id == current_user.id)
+            .all()
+        )
+        for match in user_predictions:
+            if match.match.match_date > datetime.now():
+                match.wildcard_team_id = form.wildcard_team_id.data
+                session.commit()
 
         flash("Your Predictions have been Updated successfully")
         return redirect(url_for("predictions"))
