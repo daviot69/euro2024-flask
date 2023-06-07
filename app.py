@@ -137,12 +137,14 @@ def user_profile():
 @app.route("/predictions", methods=["GET", "POST"])
 @login_required
 def predictions():
+    # TODO - this tuple definition could be moved to top ?
     predict = namedtuple(
         "Predict", ["prediction_id", "match_id", "home_score", "away_score"]
     )
 
     session = Session()
 
+    # TODO - do we need entry_found ? Could use the existence of the id ?
     entry_found = False
     entry = (
         session.query(UserEntry).filter(UserEntry.user_id == current_user.id).first()
@@ -209,6 +211,8 @@ def predictions():
             .filter(MatchPrediction.user_id == current_user.id)
             .all()
         )
+
+        # TODO - check if wildcard has actually changed - then update if it has
         for match in user_predictions:
             if match.match.match_date > datetime.now():
                 match.wildcard_team_id = form.wildcard_team_id.data

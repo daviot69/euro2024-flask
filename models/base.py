@@ -85,6 +85,7 @@ class User(Base, UserMixin):
         self.administrator = administrator
 
 
+# TODO Change user_id to be user_entry_id and change relationship
 class MatchPrediction(Base):
     __tablename__ = "match_predictions"
     id = Column(Integer, primary_key=True)

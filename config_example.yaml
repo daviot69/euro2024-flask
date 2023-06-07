@@ -1,0 +1,11 @@
+mariadb:
+  host: Host Address
+  port: Port Number
+  username: Username
+  password: Password
+  database: Database Name
+postgres:
+  host:
+  username:
+  password:
+entry_closing_date: 2023-06-07
