@@ -68,14 +68,14 @@ class LoginForm(FlaskForm):
 class MatchPrediction(Form):
     prediction_id = HiddenField()
     match_id = HiddenField()
-    home_score = IntegerField(validators=[NumberRange(min=0, max=20)])
-    away_score = IntegerField(validators=[NumberRange(min=0, max=20)])
+    home_score = IntegerField(validators=[InputRequired(), NumberRange(min=0)])
+    away_score = IntegerField(validators=[InputRequired(), NumberRange(min=0)])
 
 
 class PredictionForm(FlaskForm):
     total_goals = IntegerField(
         "Total Goals in Tournament (not including Penalty Shootouts)",
-        validators=[NumberRange(min=0, max=9999)],
+        validators=[InputRequired(), NumberRange(min=0)],
     )
     wildcard_team_id = SelectField("Wildcard Team")
     prediction = FieldList(FormField(MatchPrediction), max_entries=36)
@@ -84,9 +84,10 @@ class PredictionForm(FlaskForm):
     def __init__(self, *args, **kwargs):
         super(PredictionForm, self).__init__(*args, **kwargs)
         session = Session()
+        # self.wildcard_team_id.choices = [("", "Pick your Wildcard Team")]
         self.wildcard_team_id.choices = [
             (country.id, country.country_name)
             for country in session.query(Country).order_by(Country.country_name).all()
         ]
-
+        self.wildcard_team_id.choices.append((0, "No Selection"))
         session.close()

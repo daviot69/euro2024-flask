@@ -13,10 +13,24 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship, backref
 from datetime import datetime
 from flask_login import UserMixin
+from helpers.config import get_config
 
-engine = create_engine(
-    "mariadb+mariadbconnector://db_admin:Krakow1068@192.168.1.12:3306/euro2024"
-)
+config = get_config()
+
+if config["active_db"] == "mariadb":
+    engine = create_engine(
+        f"mariadb+mariadbconnector://{config['mariadb']['username']}:{config['mariadb']['password']}"
+        f"@{config['mariadb']['host']}:{config['mariadb']['port']}/{config['mariadb']['database']}"
+    )
+elif config["active_db"] == "postgres":
+    engine = create_engine(
+        f"postgresql+psycopg2://{config['postgres']['username']}:{config['postgres']['password']}"
+        f"@{config['postgres']['host']}:{config['postgres']['port']}/{config['postgres']['database']}"
+    )
+
+# engine = create_engine(
+#     "mariadb+mariadbconnector://db_admin:Krakow1068@192.168.1.12:3306/euro2024"
+# )
 Session = sessionmaker(bind=engine)
 Base = declarative_base()
 
@@ -137,17 +151,17 @@ class Match(Base):
 class UserEntry(Base):
     __tablename__ = "user_entries"
     id = Column(Integer, primary_key=True)
-    user_id = Column(
-        Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False
-    )
-    wildcard_team_id = Column(
-        Integer, ForeignKey("countries.id", ondelete="CASCADE"), nullable=True
-    )
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    wildcard_team_id = Column(Integer, ForeignKey("countries.id"), nullable=True)
     num_wildcard_changes = Column(Integer, default=0, nullable=False)
     total_goals_prediction = Column(Integer, nullable=True)
     creation_date = Column(DateTime, default=datetime.now())
     last_updated_date = Column(DateTime, nullable=True)
     entry_fee_paid = Column(Boolean, default=False)
+
+    wildcard_country = relationship(
+        "Country", foreign_keys="UserEntry.wildcard_team_id"
+    )
 
 
 class Club(Base):

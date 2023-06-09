@@ -1,8 +1,8 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  {% for message in get_flashed_messages() %}
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
+  {% for category, message in get_flashed_messages(with_categories=true) %}
+    <div class="alert {{ category }} alert-success alert-dismissible fade show" role="alert">
       {{ message }}
       <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
@@ -11,6 +11,7 @@
   <p>You can make as many changes up until the start of the Opening Match</p>
   <p>After that you will only be able to change your Wildcard Team (A maximum of two times)</p>
 <br/>
+{% if entry_found %}
   <h2>General Predictions</h2>
   <form method="POST" action="">
     {{ form.hidden_tag() }}
@@ -26,7 +27,7 @@
     <br/>
   <h2>Group Matches</h2>
 
-  {% if entry_found %}
+
 
     {% for nested in form.prediction %}
 
@@ -39,7 +40,13 @@
           <li class="list-group-item">{{ nested.away_score(class="form-control-sm score_input") }}</li>
           <li class="list-group-item score_label_right">{{ match_details[loop.index -1].match.away_country.country_name }}</li>
         </ul>
-
+             <li class="list-group-item">       {% for error in nested.home_score.errors %}
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                {{ error }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+           </li>
     {% endfor %}
 
     <br/>

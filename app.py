@@ -10,6 +10,7 @@ from models.base import (
     UserEntry,
     MatchPrediction,
     Select,
+    config,
 )
 from flask_bcrypt import Bcrypt
 from flask_login import (
@@ -166,15 +167,24 @@ def predictions():
         )
         form_predictions.append(match_prediction)
 
-    x = {
-        "total_goals": entry.total_goals_prediction,
-        "wildcard_team_id": entry.wildcard_team_id,
-        "prediction": form_predictions,
-    }
+    # form_data = {
+    #     "total_goals": entry.total_goals_prediction,
+    #     "wildcard_team_id": entry.wildcard_team_id,
+    #     "prediction": form_predictions,
+    # }
 
-    form = PredictionForm(data=x)
     if entry:
         entry_found = True
+        if entry.wildcard_team_id is None:
+            wildcard_team_id = 0
+        else:
+            wildcard_team_id = entry.wildcard_team_id
+
+        form_data = {
+            "total_goals": entry.total_goals_prediction,
+            "wildcard_team_id": wildcard_team_id,
+            "prediction": form_predictions,
+        }
 
         # match_details = (
         #     session.query(Match)
@@ -192,10 +202,26 @@ def predictions():
             .all()
         )
     else:
+        form_data = {
+            "total_goals": None,
+            "wildcard_team_id": None,
+            "prediction": form_predictions,
+        }
+
         group_predictions = ()
 
+    form = PredictionForm(data=form_data)
+
     if form.validate_on_submit():
+        dt_utcnow = datetime.utcnow()
+        if dt_utcnow > config["entry_closing_date"]:
+            flash("Entries are now closed as the Tournament is underway", "error")
+            return redirect(url_for("dashboard"))
+
         entry.total_goals_prediction = form.total_goals.data
+        if form.wildcard_team_id.data == "0":
+            form.wildcard_team_id.data = None
+
         entry.wildcard_team_id = form.wildcard_team_id.data
         entry.last_updated_date = datetime.now()
         session.commit()
@@ -218,7 +244,7 @@ def predictions():
                 match.wildcard_team_id = form.wildcard_team_id.data
                 session.commit()
 
-        flash("Your Predictions have been Updated successfully")
+        flash("Your Predictions have been Updated successfully", "message")
         return redirect(url_for("predictions"))
 
     return render_template(
@@ -233,6 +259,30 @@ def predictions():
 @login_required
 def dashboard():
     session = Session()
+
+    performance_data = {
+        "total_points": 0,
+        "total_perfects": 0,
+        "current_position": 0,
+        "points_today": 0,
+        "points_yesterday": 0,
+        "wildcard_team": "Not Selected",
+        "wildcard_bonus_points": 0,
+        "wildcard_penalty_points": 0,
+        "wildcard_changes_left": config["wildcard_changes"],
+    }
+
+    entry = (
+        session.query(UserEntry).filter(UserEntry.user_id == current_user.id).first()
+    )
+
+    if entry:
+        if entry.wildcard_team_id:
+            performance_data["wildcard_team"] = entry.wildcard_country.country_name
+        performance_data["wildcard_changes_left"] = (
+            config["wildcard_changes"] - entry.num_wildcard_changes
+        )
+
     upcoming_fixtures = (
         session.query(Match)
         .filter_by(home_score=None)
@@ -256,6 +306,7 @@ def dashboard():
     # )
     return render_template(
         "dashboard.html",
+        performance_data=performance_data,
         upcoming_fixtures=upcoming_fixtures,
         latest_results=latest_results,
     )

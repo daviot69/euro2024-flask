@@ -1,8 +1,8 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    {% for message in get_flashed_messages() %}
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
+    {% for category, message in get_flashed_messages(with_categories=true) %}
+        <div class="alert {{ category }} alert-success alert-dismissible fade show" role="alert">
             {{ message }}
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
@@ -15,14 +15,15 @@
         <div class="card-body">
           <h5 class="card-title">My Performance</h5>
           <ul class="list-group">
-            <li class="list-group-item">Total Points : <strong>54</strong></li>
-            <li class="list-group-item">No. Of Perfect Predictions: <strong>3</strong></li>
-            <li class="list-group-item">Current Position: <strong>5th</strong></li>
-            <li class="list-group-item">Today's Points: <strong>12</strong></li>
-            <li class="list-group-item">Yesterday's Points: <strong>8</strong></li>
-            <li class="list-group-item">Wildcard Team: <strong>Spain</strong></li>
-            <li class="list-group-item">Wildcard Bonus Points: <strong>45</strong></li>
-            <li class="list-group-item">Wildcard Penalty Points: <strong>-35</strong></li>
+            <li class="list-group-item">Total Points : <strong>{{ performance_data.total_points }}</strong></li>
+            <li class="list-group-item">No. Of Perfect Predictions: <strong>{{ performance_data.total_perfects }}</strong></li>
+            <li class="list-group-item">Current Position: <strong>{{ performance_data.current_position }}</strong></li>
+            <li class="list-group-item">Today's Points: <strong>{{ performance_data.points_today }}</strong></li>
+            <li class="list-group-item">Yesterday's Points: <strong>{{ performance_data.points_yesterday }}</strong></li>
+            <li class="list-group-item">Wildcard Team: <strong>{{ performance_data.wildcard_team }}</strong></li>
+            <li class="list-group-item">Wildcard Bonus Points: <strong>{{ performance_data.wildcard_bonus_points }}</strong></li>
+            <li class="list-group-item">Wildcard Penalty Points: <strong>{{ performance_data.wildcard_penalty_points }}</strong></li>
+            <li class="list-group-item">Wildcard Changes Left: <strong>{{ performance_data.wildcard_changes_left }}</strong></li>
           </ul>
         </div>
       </div>
