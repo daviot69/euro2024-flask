@@ -148,19 +148,25 @@ class Match(Base):
         self.away_team_id = away_team_id
 
 
-class KnockOutPredictions(Base):
-    __tablename__ = "knock_out_predictions"
-    id = Column(Integer, primary_key=True)
-    user_entry_id = Column(Integer, ForeignKey("user_entries.id"), nullable=False)
-    stage_id = Column(Integer, ForeignKey("stages.id"), nullable=False)
-    team_id = Column(Integer, ForeignKey("countries.id"), nullable=False)
-    points_scored = Column(Integer, default=0, nullable=False)
-
-
 class UserEntry(Base):
     __tablename__ = "user_entries"
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    quarter_finalist_1 = Column(Integer, ForeignKey("countries.id"), nullable=True)
+    quarter_finalist_2 = Column(Integer, ForeignKey("countries.id"), nullable=True)
+    quarter_finalist_3 = Column(Integer, ForeignKey("countries.id"), nullable=True)
+    quarter_finalist_4 = Column(Integer, ForeignKey("countries.id"), nullable=True)
+    quarter_finalist_5 = Column(Integer, ForeignKey("countries.id"), nullable=True)
+    quarter_finalist_6 = Column(Integer, ForeignKey("countries.id"), nullable=True)
+    quarter_finalist_7 = Column(Integer, ForeignKey("countries.id"), nullable=True)
+    quarter_finalist_8 = Column(Integer, ForeignKey("countries.id"), nullable=True)
+    semi_finalist_1 = Column(Integer, ForeignKey("countries.id"), nullable=True)
+    semi_finalist_2 = Column(Integer, ForeignKey("countries.id"), nullable=True)
+    semi_finalist_3 = Column(Integer, ForeignKey("countries.id"), nullable=True)
+    semi_finalist_4 = Column(Integer, ForeignKey("countries.id"), nullable=True)
+    finalist_1 = Column(Integer, ForeignKey("countries.id"), nullable=True)
+    finalist_2 = Column(Integer, ForeignKey("countries.id"), nullable=True)
+    winner = Column(Integer, ForeignKey("countries.id"), nullable=True)
     wildcard_team_id = Column(Integer, ForeignKey("countries.id"), nullable=True)
     num_wildcard_changes = Column(Integer, default=0, nullable=False)
     total_goals_prediction = Column(Integer, nullable=True)
