@@ -103,8 +103,8 @@ class User(Base, UserMixin):
 class MatchPrediction(Base):
     __tablename__ = "match_predictions"
     id = Column(Integer, primary_key=True)
-    user_id = Column(
-        Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+    user_entry_id = Column(
+        Integer, ForeignKey("user_entries.id", ondelete="CASCADE"), nullable=False
     )
     match_id = Column(
         Integer, ForeignKey("matches.id", ondelete="CASCADE"), nullable=False
@@ -146,6 +146,15 @@ class Match(Base):
         self.stage_id = stage_id
         self.home_team_id = home_team_id
         self.away_team_id = away_team_id
+
+
+class KnockOutPredictions(Base):
+    __tablename__ = "knock_out_predictions"
+    id = Column(Integer, primary_key=True)
+    user_entry_id = Column(Integer, ForeignKey("user_entries.id"), nullable=False)
+    stage_id = Column(Integer, ForeignKey("stages.id"), nullable=False)
+    team_id = Column(Integer, ForeignKey("countries.id"), nullable=False)
+    points_scored = Column(Integer, default=0, nullable=False)
 
 
 class UserEntry(Base):

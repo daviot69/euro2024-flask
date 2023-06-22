@@ -73,6 +73,7 @@ class MatchPrediction(Form):
 
 
 class PredictionForm(FlaskForm):
+    user_entry_id = HiddenField()
     total_goals = IntegerField(
         "Total Goals in Tournament (not including Penalty Shootouts)",
         validators=[InputRequired(), NumberRange(min=0)],

@@ -39,6 +39,10 @@ def load_user(user_id):
 bcrypt = Bcrypt(app)
 app.config["SECRET_KEY"] = "SidSidSid"
 
+predict = namedtuple(
+    "Predict", ["prediction_id", "match_id", "home_score", "away_score"]
+)
+
 
 @app.route("/")
 def index():
@@ -138,71 +142,56 @@ def user_profile():
 @app.route("/predictions", methods=["GET", "POST"])
 @login_required
 def predictions():
-    # TODO - this tuple definition could be moved to top ?
-    predict = namedtuple(
-        "Predict", ["prediction_id", "match_id", "home_score", "away_score"]
-    )
 
     session = Session()
 
-    # TODO - do we need entry_found ? Could use the existence of the id ?
     entry_found = False
-    entry = (
-        session.query(UserEntry).filter(UserEntry.user_id == current_user.id).first()
-    )
-    form_predictions = []
-    user_predictions = (
-        session.query(MatchPrediction)
-        .filter(MatchPrediction.user_id == current_user.id)
-        .order_by(MatchPrediction.match_id)
-        .limit(36)
-        .all()
-    )
-    for match_prediction in user_predictions:
-        match_prediction = predict(
-            match_prediction.id,
-            match_prediction.match_id,
-            match_prediction.home_score_prediction,
-            match_prediction.away_score_prediction,
-        )
-        form_predictions.append(match_prediction)
 
-    # form_data = {
-    #     "total_goals": entry.total_goals_prediction,
-    #     "wildcard_team_id": entry.wildcard_team_id,
-    #     "prediction": form_predictions,
-    # }
+    # Get the Entry for this User
+    entry = session.query(UserEntry).filter(UserEntry.user_id == current_user.id).first()
+
+    # Initialise
+    form_predictions = []
 
     if entry:
         entry_found = True
+        user_predictions = (
+            session.query(MatchPrediction)
+            .filter(MatchPrediction.user_entry_id == entry.id)
+            .order_by(MatchPrediction.match_id)
+            .limit(36)
+            .all()
+        )
+        for match_prediction in user_predictions:
+            match_prediction = predict(
+                match_prediction.id,
+                match_prediction.match_id,
+                match_prediction.home_score_prediction,
+                match_prediction.away_score_prediction,
+            )
+            form_predictions.append(match_prediction)
+
         if entry.wildcard_team_id is None:
             wildcard_team_id = 0
         else:
             wildcard_team_id = entry.wildcard_team_id
 
         form_data = {
+            "user_entry_id": entry.id,
             "total_goals": entry.total_goals_prediction,
             "wildcard_team_id": wildcard_team_id,
             "prediction": form_predictions,
         }
 
-        # match_details = (
-        #     session.query(Match)
-        #     .filter(Match.stage_id.in_([1, 2, 3, 4, 5, 6]))
-        #     .order_by(Match.match_date)
-        #     .all()
-        # )
-
         group_predictions = (
             session.query(MatchPrediction)
-            .filter(MatchPrediction.user_id == current_user.id)
-            #   .filter(MatchPrediction.id <= 36)
-            # .filter(MatchPrediction.match.stage_id.in_([1, 2, 3, 4, 5, 6]))
+            .filter(MatchPrediction.user_entry_id == entry.id)
             .order_by(MatchPrediction.match_id)
             .all()
         )
     else:
         form_data = {
+            "user_entry_id": current_user.id,
             "total_goals": None,
             "wildcard_team_id": None,
             "prediction": form_predictions,
@@ -229,12 +218,11 @@ def predictions():
             x = session.query(MatchPrediction).get(field.prediction_id.data)
             x.home_score_prediction = field.home_score.data
             x.away_score_prediction = field.away_score.data
-            #   x.wildcard_team_id = form.wildcard_team_id.data
             session.commit()
 
         user_predictions = (
             session.query(MatchPrediction)
-            .filter(MatchPrediction.user_id == current_user.id)
+            .filter(MatchPrediction.user_entry_id == entry.id)
             .all()
         )
 
@@ -331,7 +319,7 @@ def initialise_predictions():
     match_details = session.query(Match).order_by(Match.match_date).all()
 
     for match in match_details:
-        prediction = MatchPrediction(user_id=current_user.id, match_id=match.id)
+        prediction = MatchPrediction(user_entry_id=entry.id, match_id=match.id)
         session.add(prediction)
 
     session.commit()
