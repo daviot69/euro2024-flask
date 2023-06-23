@@ -114,6 +114,8 @@ def register():
 @app.route("/login", methods=["GET", "POST"])
 def login():
     form = LoginForm()
+    # form.email_address.data = ""
+    # form.password.data = ""
     if form.validate_on_submit():
         session = Session()
         user = (
@@ -142,13 +144,14 @@ def user_profile():
 @app.route("/predictions", methods=["GET", "POST"])
 @login_required
 def predictions():
-
     session = Session()
 
     entry_found = False
 
     # Get the Entry for this User
-    entry = session.query(UserEntry).filter(UserEntry.user_id == current_user.id).first()
+    entry = (
+        session.query(UserEntry).filter(UserEntry.user_id == current_user.id).first()
+    )
 
     # Initialise
     form_predictions = []
@@ -181,6 +184,21 @@ def predictions():
             "total_goals": entry.total_goals_prediction,
             "wildcard_team_id": wildcard_team_id,
             "prediction": form_predictions,
+            "quarter_finalist_1": entry.quarter_finalist_1,
+            "quarter_finalist_2": entry.quarter_finalist_2,
+            "quarter_finalist_3": entry.quarter_finalist_3,
+            "quarter_finalist_4": entry.quarter_finalist_4,
+            "quarter_finalist_5": entry.quarter_finalist_5,
+            "quarter_finalist_6": entry.quarter_finalist_6,
+            "quarter_finalist_7": entry.quarter_finalist_7,
+            "quarter_finalist_8": entry.quarter_finalist_8,
+            "semi_finalist_1": entry.semi_finalist_1,
+            "semi_finalist_2": entry.semi_finalist_2,
+            "semi_finalist_3": entry.semi_finalist_3,
+            "semi_finalist_4": entry.semi_finalist_4,
+            "finalist_1": entry.finalist_1,
+            "finalist_2": entry.finalist_1,
+            "winner": entry.winner,
         }
 
         group_predictions = (
@@ -212,8 +230,24 @@ def predictions():
             form.wildcard_team_id.data = None
 
         entry.wildcard_team_id = form.wildcard_team_id.data
+        entry.quarter_finalist_1 = form.quarter_finalist_1.data
+        entry.quarter_finalist_2 = form.quarter_finalist_2.data
+        entry.quarter_finalist_3 = form.quarter_finalist_3.data
+        entry.quarter_finalist_4 = form.quarter_finalist_4.data
+        entry.quarter_finalist_5 = form.quarter_finalist_5.data
+        entry.quarter_finalist_6 = form.quarter_finalist_6.data
+        entry.quarter_finalist_7 = form.quarter_finalist_7.data
+        entry.quarter_finalist_8 = form.quarter_finalist_8.data
+        entry.semi_finalist_1 = form.semi_finalist_1.data
+        entry.semi_finalist_2 = form.semi_finalist_2.data
+        entry.semi_finalist_3 = form.semi_finalist_3.data
+        entry.semi_finalist_4 = form.semi_finalist_4.data
+        entry.finalist_1 = form.finalist_1.data
+        entry.finalist_2 = form.finalist_2.data
+        entry.winner = form.winner.data
         entry.last_updated_date = datetime.now()
         session.commit()
+
         for field in form.prediction:
             x = session.query(MatchPrediction).get(field.prediction_id.data)
             x.home_score_prediction = field.home_score.data
@@ -227,6 +261,7 @@ def predictions():
         )
 
         # TODO - check if wildcard has actually changed - then update if it has
+        # TODO - also only update Wildcard for games from TOMORROW
         for match in user_predictions:
             if match.match.match_date > datetime.now():
                 match.wildcard_team_id = form.wildcard_team_id.data
@@ -325,3 +360,9 @@ def initialise_predictions():
     session.commit()
     session.close()
     return redirect(url_for("predictions"))
+
+
+@app.route("/admin", methods=["GET", "POST"])
+@login_required
+def admin():
+    return render_template("admin.html")

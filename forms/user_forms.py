@@ -80,6 +80,37 @@ class PredictionForm(FlaskForm):
     )
     wildcard_team_id = SelectField("Wildcard Team")
     prediction = FieldList(FormField(MatchPrediction), max_entries=36)
+    quarter_finalist_1 = SelectField(
+        "1st Quarter Finalist", validators=[InputRequired()]
+    )
+    quarter_finalist_2 = SelectField(
+        "2nd Quarter Finalist", validators=[InputRequired()]
+    )
+    quarter_finalist_3 = SelectField(
+        "3rd Quarter Finalist", validators=[InputRequired()]
+    )
+    quarter_finalist_4 = SelectField(
+        "4th Quarter Finalist", validators=[InputRequired()]
+    )
+    quarter_finalist_5 = SelectField(
+        "5th Quarter Finalist", validators=[InputRequired()]
+    )
+    quarter_finalist_6 = SelectField(
+        "6th Quarter Finalist", validators=[InputRequired()]
+    )
+    quarter_finalist_7 = SelectField(
+        "7th Quarter Finalist", validators=[InputRequired()]
+    )
+    quarter_finalist_8 = SelectField(
+        "8th Quarter Finalist", validators=[InputRequired()]
+    )
+    semi_finalist_1 = SelectField("1st Semi Finalist", validators=[InputRequired()])
+    semi_finalist_2 = SelectField("2nd Semi Finalist", validators=[InputRequired()])
+    semi_finalist_3 = SelectField("3rd Semi Finalist", validators=[InputRequired()])
+    semi_finalist_4 = SelectField("4th Semi Finalist", validators=[InputRequired()])
+    finalist_1 = SelectField("1st Finalist", validators=[InputRequired()])
+    finalist_2 = SelectField("2nd Finalist", validators=[InputRequired()])
+    winner = SelectField("Tournament Winner", validators=[InputRequired()])
     # submit = SubmitField("Submit")
 
     def __init__(self, *args, **kwargs):
@@ -91,4 +122,95 @@ class PredictionForm(FlaskForm):
             for country in session.query(Country).order_by(Country.country_name).all()
         ]
         self.wildcard_team_id.choices.append((0, "No Selection"))
+
+        self.quarter_finalist_1.choices = [
+            (country.id, country.country_name)
+            for country in session.query(Country).order_by(Country.country_name).all()
+        ]
+        self.quarter_finalist_1.choices.append((0, "No Selection"))
+
+        self.quarter_finalist_2.choices = [
+            (country.id, country.country_name)
+            for country in session.query(Country).order_by(Country.country_name).all()
+        ]
+        self.quarter_finalist_2.choices.append((0, "No Selection"))
+
+        self.quarter_finalist_3.choices = [
+            (country.id, country.country_name)
+            for country in session.query(Country).order_by(Country.country_name).all()
+        ]
+        self.quarter_finalist_3.choices.append((0, "No Selection"))
+
+        self.quarter_finalist_4.choices = [
+            (country.id, country.country_name)
+            for country in session.query(Country).order_by(Country.country_name).all()
+        ]
+        self.quarter_finalist_4.choices.append((0, "No Selection"))
+
+        self.quarter_finalist_5.choices = [
+            (country.id, country.country_name)
+            for country in session.query(Country).order_by(Country.country_name).all()
+        ]
+        self.quarter_finalist_5.choices.append((0, "No Selection"))
+
+        self.quarter_finalist_6.choices = [
+            (country.id, country.country_name)
+            for country in session.query(Country).order_by(Country.country_name).all()
+        ]
+        self.quarter_finalist_6.choices.append((0, "No Selection"))
+
+        self.quarter_finalist_7.choices = [
+            (country.id, country.country_name)
+            for country in session.query(Country).order_by(Country.country_name).all()
+        ]
+        self.quarter_finalist_7.choices.append((0, "No Selection"))
+
+        self.quarter_finalist_8.choices = [
+            (country.id, country.country_name)
+            for country in session.query(Country).order_by(Country.country_name).all()
+        ]
+        self.quarter_finalist_8.choices.append((0, "No Selection"))
+
+        self.semi_finalist_1.choices = [
+            (country.id, country.country_name)
+            for country in session.query(Country).order_by(Country.country_name).all()
+        ]
+        self.semi_finalist_1.choices.append((0, "No Selection"))
+
+        self.semi_finalist_2.choices = [
+            (country.id, country.country_name)
+            for country in session.query(Country).order_by(Country.country_name).all()
+        ]
+        self.semi_finalist_2.choices.append((0, "No Selection"))
+
+        self.semi_finalist_3.choices = [
+            (country.id, country.country_name)
+            for country in session.query(Country).order_by(Country.country_name).all()
+        ]
+        self.semi_finalist_3.choices.append((0, "No Selection"))
+
+        self.semi_finalist_4.choices = [
+            (country.id, country.country_name)
+            for country in session.query(Country).order_by(Country.country_name).all()
+        ]
+        self.semi_finalist_4.choices.append((0, "No Selection"))
+
+        self.finalist_1.choices = [
+            (country.id, country.country_name)
+            for country in session.query(Country).order_by(Country.country_name).all()
+        ]
+        self.finalist_1.choices.append((0, "No Selection"))
+
+        self.finalist_2.choices = [
+            (country.id, country.country_name)
+            for country in session.query(Country).order_by(Country.country_name).all()
+        ]
+        self.finalist_2.choices.append((0, "No Selection"))
+
+        self.winner.choices = [
+            (country.id, country.country_name)
+            for country in session.query(Country).order_by(Country.country_name).all()
+        ]
+        self.winner.choices.append((0, "No Selection"))
+
         session.close()

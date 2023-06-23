@@ -27,8 +27,6 @@
     <br/>
   <h2>Group Matches</h2>
 
-
-
     {% for nested in form.prediction %}
 
         <ul class="list-group list-group-horizontal">
@@ -54,6 +52,53 @@
     <input type="submit" class="btn btn-secondary" value="Update Predictions" />
     <br/>
     <br/>
+    <h2>Knockout Predictions</h2>
+    <br>
+    <h4>Quarter Finals</h4>
+    <br/>
+    {{ form.quarter_finalist_1.label(class="form-label") }}
+    {{ form.quarter_finalist_1(class="form-control") }}
+    {{ form.quarter_finalist_2.label(class="form-label") }}
+    {{ form.quarter_finalist_2(class="form-control") }}
+    {{ form.quarter_finalist_3.label(class="form-label") }}
+    {{ form.quarter_finalist_3(class="form-control") }}
+    {{ form.quarter_finalist_4.label(class="form-label") }}
+    {{ form.quarter_finalist_4(class="form-control") }}
+    {{ form.quarter_finalist_5.label(class="form-label") }}
+    {{ form.quarter_finalist_5(class="form-control") }}
+    {{ form.quarter_finalist_6.label(class="form-label") }}
+    {{ form.quarter_finalist_6(class="form-control") }}
+    {{ form.quarter_finalist_7.label(class="form-label") }}
+    {{ form.quarter_finalist_7(class="form-control") }}
+    {{ form.quarter_finalist_8.label(class="form-label") }}
+    {{ form.quarter_finalist_8(class="form-control") }}
+    <br/>
+    <h4>Semi Finals</h4>
+    <br/>
+    {{ form.semi_finalist_1.label(class="form-label") }}
+    {{ form.semi_finalist_1(class="form-control") }}
+    {{ form.semi_finalist_2.label(class="form-label") }}
+    {{ form.semi_finalist_2(class="form-control") }}
+    {{ form.semi_finalist_3.label(class="form-label") }}
+    {{ form.semi_finalist_3(class="form-control") }}
+    {{ form.semi_finalist_4.label(class="form-label") }}
+    {{ form.semi_finalist_4(class="form-control") }}
+    <br/>
+    <h4>Final</h4>
+    {{ form.finalist_1.label(class="form-label") }}
+    {{ form.finalist_1(class="form-control") }}
+    {{ form.finalist_2.label(class="form-label") }}
+    {{ form.finalist_2(class="form-control") }}
+    <br/>
+    <h4>Winner</h4>
+    {{ form.winner.label(class="form-label") }}
+    {{ form.winner(class="form-control") }}
+    <br/>
+
+    <input type="submit" class="btn btn-secondary" value="Update Predictions" />
+    <br/>
+    <br/>
+
     </form>
   {% else %}
 
